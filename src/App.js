@@ -1,23 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import Header from "./layout/components/Header";
+import CardList from "./view/wilders/components/CardList";
+import Form from "./view/wilders/Form";
+import axios from "axios";
+function App(props) {
+  const [wilders, setWilders] = useState([]);
 
-function App() {
+  const getWilders = () => {
+    // Send the request
+    axios
+      .get("/api/wilder")
+      // Extract the DATA from the received response
+      .then((response) => response.data.result)
+      // Use this data to update the state
+      .then((data) => {
+        setWilders(data);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  useEffect(() => {
+    getWilders();
+  }, [wilders]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Header />
+      <CardList wilders={wilders} />
+      <Form refetch={getWilders}/>
     </div>
   );
 }
